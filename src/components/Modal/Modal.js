@@ -1,39 +1,35 @@
-import React, { Component } from "react";
-
+import { useEffect } from "react";
 import s from "./Modal.module.scss";
 import PropTypes from "prop-types";
 
-export default class Modal extends Component {
-  static propTypes = {
-    onClose: PropTypes.func.isRequired,
-  };
-  componentDidMount() {
-    window.addEventListener("keydown", this.handleKeyDown);
-  }
+export default function Modal({ onClose, src }) {
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  });
 
-  componentWillUnmount() {
-    window.removeEventListener("keydown", this.handleKeyDown);
-  }
-
-  handleKeyDown = (e) => {
+  const handleKeyDown = (e) => {
     if (e.code === "Escape") {
-      this.props.onClose();
+      onClose();
     }
   };
 
-  handleBackdropClick = (event) => {
+  const handleBackdropClick = (event) => {
     if (event.currentTarget === event.target) {
-      this.props.onClose();
+      onClose();
     }
   };
 
-  render() {
-    return (
-      <div className={s.ModalBackdrop} onClick={this.handleBackdropClick}>
-        <div className={s.ModalContent}>
-          <img className={s.imgpoz} src={this.props.src} alt="" />
-        </div>
+  return (
+    <div className={s.ModalBackdrop} onClick={handleBackdropClick}>
+      <div className={s.ModalContent}>
+        <img className={s.imgpoz} src={src} alt="" />
       </div>
-    );
-  }
+    </div>
+  );
 }
+Modal.propTypes = {
+  onClose: PropTypes.func.isRequired,
+};
